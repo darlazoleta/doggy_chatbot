@@ -74,14 +74,18 @@ def ask_chatbot(user_id, question):
         return "I'm sorry, but I couldn't process your request right now."
 
 def send_hi_message():
+    headers = {"Content-Type": "application/json"}  # Ensure JSON format
+    payload = {"message": "hi"}
+
     while True:
         try:
-            response = requests.post(HI_API_URL, data={"message": "hi"})
-            print(f"Sent 'hi' message to API, status: {response.status_code}")
+            response = requests.post(HI_API_URL, json=payload, headers=headers)
+            print(f"Sent 'hi' message to API, status: {response.status_code}, response: {response.text}")
         except Exception as e:
             print(f"Error sending 'hi' message: {e}")
         
         time.sleep(30)
+
 
 @app.route("/chat", methods=["POST"])
 def chat():
