@@ -84,7 +84,7 @@ def send_hi_message():
         except Exception as e:
             print(f"Error sending 'hi' message: {e}")
         
-        time.sleep(300)
+        time.sleep(30)
 
 
 @app.route("/chat", methods=["POST"])
