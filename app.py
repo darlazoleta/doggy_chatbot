@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from cohere import Client
+import threading
+import time
+import requests
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -13,6 +16,9 @@ MODEL_ID = '126d7bb8-059e-449b-a041-e8c4877fd9bd-ft'
 
 # Store conversation context
 user_context = {}
+
+# API URL to send "hi" message to
+HI_API_URL = "https://doggy-chatbot.onrender.com/chat"  # Replace with your API URL
 
 def classify_text(question):
     try:
@@ -67,6 +73,16 @@ def ask_chatbot(user_id, question):
         print(f"Chatbot API Error: {e}")
         return "I'm sorry, but I couldn't process your request right now."
 
+def send_hi_message():
+    while True:
+        try:
+            response = requests.post(HI_API_URL, data={"message": "hi"})
+            print(f"Sent 'hi' message to API, status: {response.status_code}")
+        except Exception as e:
+            print(f"Error sending 'hi' message: {e}")
+        
+        time.sleep(30)
+
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json()
@@ -80,4 +96,7 @@ def chat():
     return jsonify({"response": chatbot_response})
 
 if __name__ == "__main__":
+    # Start the "hi" message thread when the app runs
+    threading.Thread(target=send_hi_message, daemon=True).start()
+    
     app.run(debug=True)
